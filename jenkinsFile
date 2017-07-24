@@ -1,12 +1,4 @@
-import groovy.io.FileType
-import com.cloudbees.groovy.cps.NonCPS
 
-@NonCPS
-def traverseHelper() {
-    new File(pwd()).traverse(type: FileType.FILES) {
-        println it.path
-    }
-}
 	pipeline {
 	agent any
 
