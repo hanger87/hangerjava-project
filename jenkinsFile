@@ -1,14 +1,40 @@
+mport groovy.io.FileType
+import com.cloudbees.groovy.cps.NonCPS
 
-	pipeline {
-	agent any
+@NonCPS
+def traverseHelper() {
+    new File(pwd()).traverse(type: FileType.FILES) {
+        println it.path
+    }
+}
 
-	stages {
-	   stage('build') {
-	     steps {
-	      sh 'ant -f build.xml -v'
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                parallel(
+                    "Linux": {
+                        node(label: 'lnx') {
+                            script {
+                                //checking out from git here
+                                traverseHelper()
+                            }
+                        }
+                    },
+                    "Windows": {
+                        node(label: 'win') {
+                            script {
+                                //do Windows stuff here
+                            }
+                        }
+                    }
+                )
+            }
+        }
+        //other stages here
+    }
+}
 
-		}
-	     }
-          }
-       }    
+
 
